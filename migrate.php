@@ -62,6 +62,17 @@ CREATE TABLE IF NOT EXISTS rate_limits (
   tokens INTEGER NOT NULL,
   reset_at INTEGER NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS mail_logs (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  message_id TEXT NOT NULL UNIQUE,
+  type TEXT NOT NULL,
+  recipient TEXT NOT NULL,
+  status TEXT NOT NULL,
+  attempts INTEGER NOT NULL DEFAULT 0,
+  last_error TEXT,
+  sent_at TEXT
+);
 SQL);
 
 echo "OK\n";
