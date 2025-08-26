@@ -18,7 +18,7 @@ include __DIR__.'/partials/head.php';
         <div class="d-flex gap-2 justify-content-center justify-content-md-start">
           <button class="btn btn-primary" onclick="document.querySelector('#services').scrollIntoView({behavior:'smooth'})" data-i18n="hero.cta_primary">Ver servicios</button>
           <button class="btn btn-outline-light" onclick="document.querySelector('#pricing').scrollIntoView({behavior:'smooth'})" data-i18n="hero.cta_secondary">Ver precios</button>
-          <span class="badge bg-light text-dark align-self-center">Desde <span class="price price-badge" data-price="PRICE_VPN"></span><span class="unit"></span> / mes</span>
+          <span class="px-2 py-1 text-sm rounded bg-gray-100 text-gray-900 self-center">Desde <span class="price price-badge" data-price="PRICE_VPN"></span><span class="unit"></span> / mes</span>
         </div>
         <div class="d-flex gap-2 mt-3">
           <i class="bi bi-shield-lock"></i><strong>&nbsp;Cifrado serio</strong>
@@ -42,21 +42,21 @@ include __DIR__.'/partials/head.php';
               <div class="col">
                 <strong>UK</strong>
                 <div class="d-flex flex-column align-items-center">
-                  <span class="status-dot bg-secondary" id="srv-uk"></span>
+                  <span class="status-dot bg-gray-400" id="srv-uk"></span>
                   <div class="text-muted small">nnmsrvuk01</div>
                 </div>
               </div>
               <div class="col">
                 <strong>DE</strong>
                 <div class="d-flex flex-column align-items-center">
-                  <span class="status-dot bg-secondary" id="srv-de"></span>
+                  <span class="status-dot bg-gray-400" id="srv-de"></span>
                   <div class="text-muted small">nnmsrvde01</div>
                 </div>
               </div>
               <div class="col">
                 <strong>E2E</strong>
                 <div class="d-flex flex-column align-items-center">
-                  <span class="status-dot bg-secondary" id="srv-e2e"></span>
+                  <span class="status-dot bg-gray-400" id="srv-e2e"></span>
                   <div class="text-muted small">Bitwarden</div>
                 </div>
               </div>
@@ -75,10 +75,10 @@ include __DIR__.'/partials/head.php';
       <div class="row g-4">
         <div class="col-md-4">
           <div class="card h-100 shadow-sm"><div class="card-body d-flex flex-column gap-2">
-            <img class="service-logo" src="static/rsc/nnm-vpn-logo.png" alt="VPN">
+            <img class="service-logo logo-dark" src="static/rsc/nnm-vpn-logo.png" alt="VPN">
             <div class="d-flex justify-content-between">
               <strong data-i18n="sections.services.card_vpn.title">VPN</strong>
-              <span class="badge bg-secondary"><span class="price" data-price="PRICE_VPN"></span><span class="unit"></span> /m</span>
+              <span class="px-2 py-1 text-xs rounded bg-gray-600 text-white"><span class="price" data-price="PRICE_VPN"></span><span class="unit"></span> /m</span>
             </div>
             <ul class="text-muted">
               <li data-i18n="sections.services.card_vpn.p1">WireGuard por defecto.</li>
@@ -90,10 +90,10 @@ include __DIR__.'/partials/head.php';
         </div>
         <div class="col-md-4">
           <div class="card h-100 shadow-sm"><div class="card-body d-flex flex-column gap-2">
-            <img class="service-logo" src="static/rsc/nnm-psw-logo.png" alt="Gestor">
+            <img class="service-logo logo-dark" src="static/rsc/nnm-psw-logo.png" alt="Gestor">
             <div class="d-flex justify-content-between">
               <strong data-i18n="sections.services.card_password_manager.title">Gestor de contraseñas</strong>
-              <span class="badge bg-secondary"><span class="price" data-price="PRICE_PASSWORD"></span><span class="unit"></span> /m</span>
+              <span class="px-2 py-1 text-xs rounded bg-gray-600 text-white"><span class="price" data-price="PRICE_PASSWORD"></span><span class="unit"></span> /m</span>
             </div>
             <ul class="text-muted">
               <li data-i18n="sections.services.card_password_manager.p1">Cifrado E2E.</li>
@@ -105,10 +105,10 @@ include __DIR__.'/partials/head.php';
         </div>
         <div class="col-md-4">
           <div class="card h-100 shadow-sm"><div class="card-body d-flex flex-column gap-2">
-            <img class="service-logo" src="static/rsc/nnm-stg-logo.png" alt="Storage">
+            <img class="service-logo logo-dark" src="static/rsc/nnm-stg-logo.png" alt="Storage">
             <div class="d-flex justify-content-between">
               <strong data-i18n="sections.services.card_encrypted_storage.title">Almacenamiento cifrado</strong>
-              <span class="badge bg-secondary"><span class="price" data-price="PRICE_STORAGE"></span><span class="unit"></span> /m</span>
+              <span class="px-2 py-1 text-xs rounded bg-gray-600 text-white"><span class="price" data-price="PRICE_STORAGE"></span><span class="unit"></span> /m</span>
             </div>
             <ul class="text-muted">
               <li data-i18n="sections.services.card_encrypted_storage.p1">Versionado y enlaces protegidos.</li>
@@ -173,23 +173,15 @@ include __DIR__.'/partials/head.php';
   <section id="faq" class="py-5">
     <div class="container">
       <h2 class="h4 mb-4" data-i18n="sections.faq.title">Preguntas frecuentes</h2>
-      <div class="accordion" id="faqAccordion">
-        <div class="accordion-item">
-          <h2 class="accordion-header" id="q1">
-            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#a1" aria-expanded="true" aria-controls="a1">¿Guardáis registros?</button>
-          </h2>
-          <div id="a1" class="accordion-collapse collapse show" aria-labelledby="q1" data-bs-parent="#faqAccordion">
-            <div class="accordion-body text-muted">No. Métricas agregadas mínimas para mantenimiento.</div>
-          </div>
-        </div>
-        <div class="accordion-item">
-          <h2 class="accordion-header" id="q2">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#a2" aria-expanded="false" aria-controls="a2">¿Cómo cancelo?</button>
-          </h2>
-          <div id="a2" class="accordion-collapse collapse" aria-labelledby="q2" data-bs-parent="#faqAccordion">
-            <div class="accordion-body text-muted">Desde tu panel. Sin permanencia.</div>
-          </div>
-        </div>
+      <div class="faq">
+        <details open>
+          <summary>¿Guardáis registros?</summary>
+          <p class="text-muted">No. Métricas agregadas mínimas para mantenimiento.</p>
+        </details>
+        <details>
+          <summary>¿Cómo cancelo?</summary>
+          <p class="text-muted">Desde tu panel. Sin permanencia.</p>
+        </details>
       </div>
     </div>
   </section>
@@ -217,12 +209,7 @@ include __DIR__.'/partials/head.php';
   window.NNM_CONFIG = {
     BASE_CURRENCY: '<?php echo e($config['BASE_CURRENCY'] ?? 'EUR'); ?>',
     UNIT: '<?php echo e($config['UNIT'] ?? '€'); ?>',
-    PRICES: {
-      PRICE_VPN: <?php echo (int)round(100 * (float)($config['PRICE_VPN'] ?? 1)) / 100; ?>,
-      PRICE_PASSWORD: <?php echo (int)round(100 * (float)($config['PRICE_PASSWORD'] ?? 1)) / 100; ?>,
-      PRICE_STORAGE: <?php echo (int)round(100 * (float)($config['PRICE_STORAGE'] ?? 1)) / 100; ?>,
-      PRICE_BUNDLE: <?php echo (int)round(100 * (float)($config['PRICE_BUNDLE'] ?? 5)) / 100; ?>
-    }
+    PRICES: {}
   };
 </script>
 <script src="/static/js/index.js"></script>

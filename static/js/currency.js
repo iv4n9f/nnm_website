@@ -1,7 +1,7 @@
 // currency.js — convierte precios según divisa elegida
-(() => {
+ (async () => {
   const cfg   = window.NNM_CONFIG || { BASE_CURRENCY: 'EUR', PRICES: {} };
-  const base  = (cfg.BASE_CURRENCY || 'EUR').toUpperCase();
+  let base  = (cfg.BASE_CURRENCY || 'EUR').toUpperCase();
   const note    = document.getElementById('fxNote');
   const priceEls= [...document.querySelectorAll('.price')];
   const unitEls = [...document.querySelectorAll('.unit')];
@@ -11,6 +11,18 @@
     PRICE_STORAGE: Number(cfg.PRICES?.PRICE_STORAGE || 0),
     PRICE_BUNDLE: Number(cfg.PRICES?.PRICE_BUNDLE || 0),
   };
+
+  // Carga de precios desde el backend (Stripe)
+  try {
+    const r = await fetch('/api/prices.php');
+    if (r.ok) {
+      const j = await r.json();
+      Object.keys(j).forEach(k => {
+        baseMap[k] = Number(j[k]?.amount || baseMap[k] || 0);
+        if (j[k]?.currency) base = String(j[k].currency).toUpperCase();
+      });
+    }
+  } catch {}
   const CACHE_KEY = 'nnm_fx_cache';
   const TTL_MS = 12 * 60 * 60 * 1000;
   function loadCache(pair){
