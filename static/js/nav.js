@@ -1,18 +1,43 @@
-// nav.js — controla tema, idioma y moneda usando Bootstrap
+// nav.js — manejo de menú, tema, idioma y moneda sin Bootstrap
 (() => {
   const root = document.documentElement;
   const themeKey = 'nnm_theme';
+
   function applyTheme(mode){
-    root.setAttribute('data-bs-theme', mode);
+    root.setAttribute('data-theme', mode);
     const icon = document.getElementById('themeIcon');
     if(icon) icon.className = mode === 'dark' ? 'bi bi-sun' : 'bi bi-moon';
     localStorage.setItem(themeKey, mode);
   }
+
   applyTheme(localStorage.getItem(themeKey) || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+
   document.getElementById('themeToggle')?.addEventListener('click', () => {
-    applyTheme(root.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark');
+    applyTheme(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
   });
 
+  // Menú responsive
+  const navToggle = document.getElementById('navToggle');
+  const mainNav = document.getElementById('mainNav');
+  navToggle?.addEventListener('click', () => {
+    mainNav?.classList.toggle('open');
+  });
+
+  // Dropdowns
+  document.querySelectorAll('.dropdown-toggle').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.preventDefault();
+      const menu = btn.nextElementSibling;
+      menu?.classList.toggle('show');
+    });
+  });
+  document.addEventListener('click', e => {
+    if (!e.target.closest('.dropdown')) {
+      document.querySelectorAll('.dropdown-menu.show').forEach(m => m.classList.remove('show'));
+    }
+  });
+
+  // Idioma
   document.querySelectorAll('#menuLang a[data-lang]').forEach(a => {
     a.addEventListener('click', e => {
       e.preventDefault();
@@ -23,6 +48,7 @@
     });
   });
 
+  // Moneda
   document.querySelectorAll('#menuCurrency a[data-cur]').forEach(a => {
     a.addEventListener('click', e => {
       e.preventDefault();
@@ -33,6 +59,7 @@
     });
   });
 
+  // Estados iniciales
   const savedLang = localStorage.getItem('nnm_lang');
   if(savedLang){
     document.getElementById('lblLang').textContent = savedLang.toUpperCase();
