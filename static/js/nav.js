@@ -1,62 +1,56 @@
-// nav.js – menús, tema, i18n y currency
+// nav.js — gestiona tema, idioma y moneda con menus Material
 (() => {
-  const $ = s => document.querySelector(s);
-  const $$ = s => Array.from(document.querySelectorAll(s));
-
-  // Tema
-  const THEME_KEY = 'nnm_theme';
+  const root = document.documentElement;
+  const themeKey = 'nnm_theme';
   function applyTheme(mode){
-    const root = document.documentElement;
     if(mode==='dark'){ root.classList.add('theme-dark'); root.setAttribute('data-theme','dark'); }
     else { root.classList.remove('theme-dark'); root.setAttribute('data-theme','light'); }
-    $('#themeIcon').textContent = mode==='dark' ? 'light_mode' : 'dark_mode';
-    localStorage.setItem(THEME_KEY, mode);
+    document.getElementById('themeIcon').textContent = mode==='dark' ? 'light_mode' : 'dark_mode';
+    localStorage.setItem(themeKey, mode);
   }
-  applyTheme(localStorage.getItem(THEME_KEY) || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
-  $('#themeToggle')?.addEventListener('click', () => {
-    applyTheme(document.documentElement.classList.contains('theme-dark') ? 'light' : 'dark');
+  applyTheme(localStorage.getItem(themeKey) || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark':'light'));
+  document.getElementById('themeToggle')?.addEventListener('click', () => {
+    applyTheme(root.classList.contains('theme-dark') ? 'light' : 'dark');
   });
 
-  // Dropdown genérico
-  function bindDropdown(rootSel, onSelect){
-    const root = $(rootSel); if(!root) return;
-    const btn = root.querySelector('.dropdown-btn');
-    const menu = root.querySelector('.dropdown-menu');
-    const closeAll = () => $$('.dropdown.open').forEach(d=>d.classList.remove('open'));
-    btn.addEventListener('click', (e)=>{ e.stopPropagation(); closeAll(); root.classList.toggle('open'); });
-    menu.addEventListener('click', (e)=>{
-      const item = e.target.closest('.dropdown-item'); if(!item) return;
-      onSelect(item);
-      root.classList.remove('open');
-    });
-    document.addEventListener('click', closeAll);
+  const menuLang = document.getElementById('menuLang');
+  const btnLang  = document.getElementById('btnLang');
+  btnLang?.addEventListener('click', () => menuLang.open = !menuLang.open);
+  menuLang?.addEventListener('click', e => {
+    const it = e.target.closest('md-menu-item'); if(!it) return;
+    const lang = it.getAttribute('data-lang');
+    document.getElementById('lblLang').textContent = (lang||'es').toUpperCase();
+    menuLang.open = false;
+    localStorage.setItem('nnm_lang', lang);
+    window.dispatchEvent(new CustomEvent('nnm:set-lang',{detail:{lang}}));
+  });
+
+  const menuCur = document.getElementById('menuCurrency');
+  const btnCur  = document.getElementById('btnCurrency');
+  btnCur?.addEventListener('click', () => menuCur.open = !menuCur.open);
+  menuCur?.addEventListener('click', e => {
+    const it = e.target.closest('md-menu-item'); if(!it) return;
+    const currency = it.getAttribute('data-cur');
+    document.getElementById('lblCurrency').textContent = currency;
+    menuCur.open = false;
+    localStorage.setItem('nnm_currency', currency);
+    window.dispatchEvent(new CustomEvent('nnm:set-currency',{detail:{currency}}));
+  });
+
+  // Inicializar valores almacenados
+  const savedLang = localStorage.getItem('nnm_lang');
+  if(savedLang) {
+    document.getElementById('lblLang').textContent = savedLang.toUpperCase();
+    window.dispatchEvent(new CustomEvent('nnm:set-lang',{detail:{lang:savedLang}}));
+  }
+  const savedCur = localStorage.getItem('nnm_currency');
+  if(savedCur) {
+    document.getElementById('lblCurrency').textContent = savedCur;
+    window.dispatchEvent(new CustomEvent('nnm:set-currency',{detail:{currency:savedCur}}));
   }
 
-  // Idioma
-  const LANG_KEY = 'nnm_lang';
-  const curLang = localStorage.getItem(LANG_KEY) || 'es';
-  $('#lblLang').textContent = curLang.toUpperCase();
-  bindDropdown('#ddLang', (item)=>{
-    const lang = item.dataset.lang;
-    if(!lang) return;
-    $('#lblLang').textContent = lang.toUpperCase();
-    localStorage.setItem(LANG_KEY, lang);
-    window.dispatchEvent(new CustomEvent('nnm:set-lang', {detail:{lang}}));
-  });
-
-  // Currency
-  const CUR_KEY = 'nnm_currency';
-  const cur = localStorage.getItem(CUR_KEY) || (window.NNM_CONFIG?.BASE_CURRENCY || 'EUR');
-  $('#lblCurrency').textContent = cur;
-  bindDropdown('#ddCurrency', (item)=>{
-    const currency = item.dataset.cur;
-    if(!currency) return;
-    $('#lblCurrency').textContent = currency;
-    localStorage.setItem(CUR_KEY, currency);
-    window.dispatchEvent(new CustomEvent('nnm:set-currency', {detail:{currency}}));
-  });
-
-  // Inicializar conversión al cargar
-  window.dispatchEvent(new CustomEvent('nnm:set-currency', {detail:{currency: cur}}));
-  window.dispatchEvent(new CustomEvent('nnm:set-lang', {detail:{lang: curLang}}));
+  const navToggle = document.getElementById('navToggle');
+  const mainNav = document.getElementById('mainNav');
+  navToggle?.addEventListener('click', () => mainNav.classList.toggle('open'));
+  mainNav?.addEventListener('click', e => { if(e.target.tagName === 'A') mainNav.classList.remove('open'); });
 })();

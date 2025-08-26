@@ -39,8 +39,7 @@ body {
 /* App bar limpio, sin grises planos */
 .app-bar {
   position: sticky; top: 0; z-index: 10;
-  display: grid; grid-template-columns: auto 1fr auto auto auto auto;
-  gap: var(--space-2); align-items: center;
+  display: flex; align-items: center; gap: var(--space-2);
   padding: .75rem 1rem;
   background: color-mix(in srgb, var(--md-surface) 96%, rgba(0,0,0,.04));
   border-bottom: 1px solid var(--md-outline);
@@ -48,10 +47,24 @@ body {
 }
 .brand { display:flex; align-items:center; gap:.5rem; text-decoration:none; color:inherit; font-weight:600 }
 .brand-logo { width:28px; height:28px; border-radius:50%; }
+.spacer { flex:1 1 auto; }
+.mobile-only { display:none; }
 
-.nav-links { justify-self: center; display:flex; gap:.5rem; flex-wrap:wrap }
+.nav-links { display:flex; gap:.5rem; flex-wrap:wrap }
 .nav-links a { padding:.4rem .7rem; border-radius:999px; text-decoration:none }
 .nav-links a:hover { background: rgba(11,87,208,.12); }
+
+@media (max-width: 720px){
+  .mobile-only { display:inline-flex; }
+  .nav-links {
+    display:none;
+    position:absolute; top:100%; right:1rem;
+    flex-direction:column; background: var(--md-surface);
+    border:1px solid var(--md-outline); border-radius:12px;
+    padding:8px; box-shadow:0 8px 24px rgba(0,0,0,.12);
+  }
+  .nav-links.open { display:flex; }
+}
 
 /* Layout */
 .container { max-width: 1120px; margin: 0 auto; padding: 0 16px; }
@@ -110,3 +123,9 @@ footer { border-top: 1px solid var(--md-outline); padding:16px 0; }
 .dropdown.open .dropdown-menu { display:block; }
 .dropdown-item { display:flex; align-items:center; gap:.5rem; padding:.5rem .6rem; border-radius:10px; cursor:pointer; }
 .dropdown-item:hover { background: color-mix(in srgb, var(--md-primary) 12%, transparent); }
+.table-simple { width:100%; border-collapse:collapse; }
+.table-simple th, .table-simple td { padding:8px; border-bottom:1px solid var(--md-outline); }
+.table-simple th { background: var(--md-surface-variant); text-align:left; }
+.bg-success { background:#0f9d58; }
+.bg-secondary { background:var(--md-outline); }
+.status-dot{width:.6rem;height:.6rem;border-radius:50%}
