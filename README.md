@@ -13,6 +13,7 @@ Herramientas básicas para gestión de usuarios y seguridad.
 php -d assert.exception=1 tests/security_test.php
 php -d assert.exception=1 tests/mail_test.php
 php -d assert.exception=1 tests/stripe_webhook_test.php
+php -d assert.exception=1 tests/privacy_test.php
 ```
 
 ## Correo transaccional
@@ -30,4 +31,13 @@ php -d assert.exception=1 tests/stripe_webhook_test.php
 
 ## Privacidad de datos
 - Endpoint `api/user_privacy.php` permite `action=export` para obtener los datos del usuario y `action=erase` para solicitar el borrado de la cuenta.
+- Las páginas públicas de [Privacidad](static/privacy.html), [Términos](static/terms.html) y [Cookies](static/cookies.html) explican el tratamiento de datos.
+- El formulario de registro incluye un checkbox obligatorio y se registra el consentimiento en `audit_logs`.
 
+## Despliegue
+1. Copiar `.env.example` a `.env` y rellenar las variables necesarias.
+2. Ejecutar `./init.sh` para inicializar la base de datos y aplicar migraciones.
+=======
+
+## Privacidad de datos
+- Endpoint `api/user_privacy.php` permite `action=export` para obtener los datos del usuario y `action=erase` para solicitar el borrado de la cuenta.

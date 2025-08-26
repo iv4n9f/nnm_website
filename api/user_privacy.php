@@ -10,6 +10,21 @@ $action = $_GET['action'] ?? '';
 
 switch ($action) {
   case 'export':
+    $st = db()->prepare('SELECT id,email,username,locale,role FROM users WHERE id=?');
+    $st->execute([$u['id']]);
+    $userData = $st->fetch();
+    $logsSt = db()->prepare('SELECT action,meta,created_at FROM audit_logs WHERE user_id=?');
+    $logsSt->execute([$u['id']]);
+    $logs = $logsSt->fetchAll();
+    echo json_encode(['user' => $userData, 'audit_logs' => $logs]);
+    break;
+  case 'erase':
+    $st = db()->prepare('DELETE FROM users WHERE id=?');
+    $st->execute([$u['id']]);
+    audit($u['id'], 'erase_account');
+    session_destroy();
+    echo json_encode(['ok' => true]);
+=======
     // TODO: gather and return all user-related data
     echo json_encode(['user' => $u]);
     break;
