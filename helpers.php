@@ -22,9 +22,44 @@ function get_subs(array $u): array {
   return $out;
 }
 
-function audit(int $uid, string $action, array $payload=[]): void {
-  $st = db()->prepare('INSERT INTO ops_audit(user_id,action,payload) VALUES(?,?,?)');
-  $st->execute([$uid, $action, json_encode($payload, JSON_UNESCAPED_UNICODE)]);
+function user_has_role(array $u, string $role): bool {
+  return ($u['role'] ?? 'user') === $role;
+}
+
+function require_role(array $u, string ...$roles): void {
+  if (!in_array($u['role'] ?? 'user', $roles, true)) {
+    http_response_code(403);
+    exit('no autorizado');
+  }
+}
+
+function audit(int $uid, string $action, array $payload = []): void {
+  global $CONFIG;
+  $meta = json_encode($payload, JSON_UNESCAPED_UNICODE);
+  $ts = time();
+  $sig = hash_hmac('sha256', $uid . '|' . $action . '|' . $meta . '|' . $ts, $CONFIG['AUDIT_SECRET']);
+  $st = db()->prepare('INSERT INTO audit_logs(user_id,action,meta,signature,created_at) VALUES(?,?,?,?,datetime("now"))');
+  $st->execute([$uid, $action, $meta, $sig]);
+}
+
+function rate_limit(string $key, int $limit, int $period): bool {
+  $now = time();
+  $st = db()->prepare('SELECT tokens, reset_at FROM rate_limits WHERE key=?');
+  $st->execute([$key]);
+  $row = $st->fetch();
+  if (!$row || (int)$row['reset_at'] <= $now) {
+    $tokens = $limit - 1;
+    $reset = $now + $period;
+    $st = db()->prepare('REPLACE INTO rate_limits(key,tokens,reset_at) VALUES(?,?,?)');
+    $st->execute([$key, $tokens, $reset]);
+    return true;
+  }
+  if ((int)$row['tokens'] <= 0) {
+    return false;
+  }
+  $st = db()->prepare('UPDATE rate_limits SET tokens=tokens-1 WHERE key=?');
+  $st->execute([$key]);
+  return true;
 }
 
 function csrf_token(): string {

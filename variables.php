@@ -16,4 +16,7 @@ return [
 
   // Paths
   'DATA_DIR' => '/var/nnm',
+  // Audit
+  'AUDIT_SECRET' => getenv('AUDIT_SECRET') ?: 'dev-secret',
 ];
+
