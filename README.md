@@ -3,6 +3,8 @@
 Herramientas básicas para gestión de usuarios y seguridad.
 
 ## Características
+- Interfaz responsiva con modo oscuro/claro, selector de idioma y divisa.
+- Recursos SEO preconfigurados (robots.txt y sitemap.xml).
 - Registro de auditoría firmado y exportable (JSON o CSV).
 - Control de acceso basado en roles (owner, admin, soporte, user).
 - Rate limiting y protección CSRF en formularios.
@@ -37,7 +39,6 @@ php -d assert.exception=1 tests/privacy_test.php
 ## Despliegue
 1. Copiar `.env.example` a `.env` y rellenar las variables necesarias.
 2. Ejecutar `./init.sh` para inicializar la base de datos y aplicar migraciones.
-=======
 
 ## Privacidad de datos
 - Endpoint `api/user_privacy.php` permite `action=export` para obtener los datos del usuario y `action=erase` para solicitar el borrado de la cuenta.

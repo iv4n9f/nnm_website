@@ -4,7 +4,6 @@ require_once __DIR__.'/mail.php';
 require_once __DIR__.'/helpers.php';
 
 $error = '';
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   csrf_verify();
   $email = trim($_POST['email'] ?? '');
@@ -33,29 +32,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
   }
 }
+$title = 'Registro • NNM Secure';
+$description = 'Crea tu cuenta para acceder a los servicios cifrados de NNM Secure';
+include __DIR__.'/partials/head.php';
 ?>
-<!doctype html>
-<html lang="es">
-<head>
-  <meta charset="utf-8">
-  <title>Registro • NNM Secure</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="bg-light">
-<main class="container py-5" style="max-width:420px;">
-  <h1 class="h3 mb-3 text-center">Crear cuenta</h1>
-  <?php if($error): ?><div class="alert alert-danger"><?=e($error)?></div><?php endif; ?>
-  <form method="post" class="card card-body shadow-sm">
-    <?= csrf_field() ?>
-    <div class="mb-3">
-      <label class="form-label">Email</label>
-      <input type="email" name="email" class="form-control" required>
+<main class="container" style="max-width:420px;padding:40px 0;">
+  <h1 class="headline" style="font-size:24px;text-align:center" data-i18n="register.title">Crear cuenta</h1>
+  <?php if($error): ?>
+    <div class="card" style="margin-top:12px"><div class="content"><p class="subtle"><?=e($error)?></p></div></div>
+  <?php endif; ?>
+  <form method="post" class="card" style="margin-top:16px">
+    <div class="content" style="display:flex;flex-direction:column;gap:12px">
+      <?= csrf_field() ?>
+      <label>Email
+        <input type="email" name="email" required>
+      </label>
+      <label>Contraseña
+        <input type="password" name="password" required>
+        <span class="subtle" style="font-size:12px">Mínimo 8 caracteres.</span>
+      </label>
+      <label style="flex-direction:row;align-items:center;gap:8px">
+        <input type="checkbox" name="accept_terms" required>
+        <span>Acepto la <a class="link" href="/static/privacy.html" target="_blank">Privacidad</a>, <a class="link" href="/static/terms.html" target="_blank">Términos</a> y <a class="link" href="/static/cookies.html" target="_blank">Cookies</a>.</span>
+      </label>
+      <md-filled-button type="submit">Registrarse</md-filled-button>
     </div>
-    <div class="mb-3">
-      <label class="form-label">Contraseña</label>
-      <input type="password" name="password" class="form-control" required>
-      <div class="form-text">Mínimo 8 caracteres.</div>
-    </div>
+  </form>
+  <p class="subtle" style="text-align:center;margin-top:12px"><a class="link" href="/login.php">¿Ya tienes cuenta? Inicia sesión</a></p>
+  <p class="subtle" style="text-align:center;margin-top:12px">
+    <a class="link" href="/static/privacy.html" target="_blank">Privacidad</a> ·
+    <a class="link" href="/static/terms.html" target="_blank">Términos</a> ·
+    <a class="link" href="/static/cookies.html" target="_blank">Cookies</a>
     <div class="form-check mb-3">
       <input class="form-check-input" type="checkbox" name="accept_terms" id="acceptTerms" required>
       <label class="form-check-label" for="acceptTerms">
@@ -71,5 +78,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <a href="/static/cookies.html" target="_blank">Cookies</a>
   </p>
 </main>
-</body>
-</html>
+<?php include __DIR__.'/partials/footer.php'; ?>

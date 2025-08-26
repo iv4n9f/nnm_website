@@ -24,7 +24,7 @@ switch ($action) {
     audit($u['id'], 'erase_account');
     session_destroy();
     echo json_encode(['ok' => true]);
-=======
+
     // TODO: gather and return all user-related data
     echo json_encode(['user' => $u]);
     break;
