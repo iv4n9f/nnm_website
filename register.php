@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__.'/init.php';
+require_once __DIR__.'/mail.php';
 require_once __DIR__.'/helpers.php';
 
 $error = '';
@@ -15,6 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
       $st = db()->prepare('INSERT INTO users(email, pass_hash) VALUES(?,?)');
       $st->execute([$email,$hash]);
+      send_mail('welcome', $email, ['name'=>$email, 'subject'=>'Bienvenido a NNM Secure']);
       $_SESSION['uid'] = (int)db()->lastInsertId();
       header('Location: /panel.php');
       exit;
