@@ -1,6 +1,113 @@
+:root {
+  --brand-primary: #6d4aff;
+  --brand-secondary: #4a34c4;
+  --brand-success: #2ecc71;
+  --brand-danger: #e74c3c;
+  --brand-bg-light: #f8f8fa;
+  --brand-bg-dark: #0d0d0f;
+}
+
+[data-bs-theme="light"] {
+  --bs-body-bg: var(--brand-bg-light);
+  --bs-body-color: #1b1b1f;
+  --bs-primary: var(--brand-primary);
+}
+
+[data-bs-theme="dark"] {
+  --bs-body-bg: var(--brand-bg-dark);
+  --bs-body-color: #f8f8fa;
+  --bs-primary: var(--brand-primary);
+}
+
 body {
-    margin: 0;
-    font-family: var(--font-sans);
-    background: var(--md-surface);
-    color: var(--md-on-surface);
+  font-family: Inter, system-ui, sans-serif;
+}
+
+.navbar-brand span {
+  color: var(--brand-primary);
+  font-weight: 600;
+}
+
+.bg-brand {
+  background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+  border: none;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, var(--brand-secondary), var(--brand-primary));
+}
+
+.card {
+  border: none;
+  border-radius: .75rem;
+}
+
+[data-bs-theme="dark"] .card {
+  background-color: #1a1a1e;
+}
+
+[data-bs-theme="dark"] .btn-outline-primary {
+  color: var(--brand-primary);
+  border-color: var(--brand-primary);
+}
+
+[data-bs-theme="dark"] .btn-outline-primary:hover {
+  background: var(--brand-primary);
+  color: #fff;
+}
+
+.status-dot {
+  width: .6rem;
+  height: .6rem;
+  border-radius: 50%;
+}
+
+.service-logo {
+  width: auto;
+  height: 64px;
+  object-fit: contain;
+}
+
+.trustbar img {
+  height: 24px;
+}
+
+.fade-in {
+  opacity: 0;
+  animation: fadeIn .6s ease forwards;
+}
+
+@keyframes fadeIn {
+  from {opacity: 0; transform: translateY(10px);}
+  to {opacity: 1; transform: translateY(0);}
+}
+
+.loader {
+  position: fixed;
+  inset: 0;
+  background: var(--bs-body-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  transition: opacity .3s ease;
+}
+
+.loader.hide {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.loader img {
+  width: 64px;
+  height: 64px;
+  animation: spin 1.2s linear infinite;
+}
+
+@keyframes spin {
+  to {transform: rotate(360deg);}
 }

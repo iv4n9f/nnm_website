@@ -55,3 +55,9 @@ CREATE TABLE IF NOT EXISTS mail_logs (
   last_error TEXT,
   sent_at TEXT
 );
+
+CREATE TABLE IF NOT EXISTS password_resets (
+  user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+  token TEXT NOT NULL,
+  expires_at INTEGER NOT NULL
+);
