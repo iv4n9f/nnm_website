@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://nnm.example/</loc></url>
+  <url><loc>https://nnm.example/login.php</loc></url>
+  <url><loc>https://nnm.example/register.php</loc></url>
+  <url><loc>https://nnm.example/panel.php</loc></url>
+  <url><loc>https://nnm.example/static/privacy.html</loc></url>
+  <url><loc>https://nnm.example/static/terms.html</loc></url>
+  <url><loc>https://nnm.example/static/cookies.html</loc></url>
+</urlset>

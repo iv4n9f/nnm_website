@@ -1,6 +1,59 @@
+:root {
+  --brand-primary: #6d4aff;
+  --brand-secondary: #4a34c4;
+}
+
+[data-bs-theme="light"] {
+  --bs-body-bg: #f8f8fa;
+  --bs-body-color: #1b1b1f;
+  --bs-primary: var(--brand-primary);
+}
+
+[data-bs-theme="dark"] {
+  --bs-body-bg: #0d0d0f;
+  --bs-body-color: #f8f8fa;
+  --bs-primary: var(--brand-primary);
+}
+
 body {
-    margin: 0;
-    font-family: var(--font-sans);
-    background: var(--md-surface);
-    color: var(--md-on-surface);
+  font-family: Inter, system-ui, sans-serif;
+}
+
+.navbar-brand span {
+  color: var(--brand-primary);
+  font-weight: 600;
+}
+
+.bg-brand {
+  background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+  border: none;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, var(--brand-secondary), var(--brand-primary));
+}
+
+.card {
+  border: none;
+  border-radius: .75rem;
+}
+
+.status-dot {
+  width: .6rem;
+  height: .6rem;
+  border-radius: 50%;
+}
+
+.service-logo {
+  width: auto;
+  height: 64px;
+  object-fit: contain;
+}
+
+.trustbar img {
+  height: 24px;
 }
