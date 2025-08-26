@@ -21,7 +21,18 @@ log "Paquetes base"
 export DEBIAN_FRONTEND=noninteractive
 apt-get update -y
 apt-get install -y nginx "php$PV-fpm" "php$PV-cli" "php$PV-sqlite3" \
-  "php$PV-curl" "php$PV-mbstring" "php$PV-xml" "php$PV-zip" certbot acl
+  "php$PV-curl" "php$PV-mbstring" "php$PV-xml" "php$PV-zip" certbot acl curl git unzip
+# Composer desde apt si existe
+if ! command -v composer >/dev/null 2>&1; then
+  log "Instalando Composer"
+  apt-get install -y composer || true
+fi
+# Si aún no está, usa installer oficial
+if ! command -v composer >/devnull 2>&1; then
+  php -r "copy('https://getcomposer.org/installer','composer-setup.php');"
+  php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+  rm -f composer-setup.php
+fi
 
 php -m | grep -qi pdo_sqlite || { echo "Falta php$PV-sqlite3"; exit 1; }
 
@@ -32,9 +43,23 @@ rsync -a --delete "$PROJECT_DIR"/ "$WEB_ROOT"/
 chown -R "$WWW_USER:$WWW_GROUP" "$WEB_ROOT"
 find "$WEB_ROOT" -type d -exec chmod 755 {} \;
 find "$WEB_ROOT" -type f -exec chmod 644 {} \;
-
-# Asegura traversal en /srv y /srv/www
 chmod 755 /srv /srv/www 2>/dev/null || true
+
+# ===== Dependencias PHP del proyecto (Stripe SDK) =====
+log "Instalando dependencias PHP en $WEB_ROOT"
+# Si hay composer.json, instala; si no, crea mínimo y requiere stripe
+if [ -f "$WEB_ROOT/composer.json" ]; then
+  sudo -u "$WWW_USER" composer install --no-dev --prefer-dist -d "$WEB_ROOT" || \
+  composer install --no-dev --prefer-dist -d "$WEB_ROOT"
+else
+  sudo -u "$WWW_USER" composer init -n --name nnm/site --working-dir "$WEB_ROOT" || true
+  sudo -u "$WWW_USER" composer require stripe/stripe-php:^14 --no-dev --prefer-dist -d "$WEB_ROOT" || \
+  composer require stripe/stripe-php:^14 --no-dev --prefer-dist -d "$WEB_ROOT"
+fi
+# Asegura permisos de vendor
+chown -R "$WWW_USER:$WWW_GROUP" "$WEB_ROOT/vendor" || true
+find "$WEB_ROOT/vendor" -type d -exec chmod 755 {} \; 2>/dev/null || true
+find "$WEB_ROOT/vendor" -type f -exec chmod 644 {} \; 2>/dev/null || true
 
 # ===== Detectar si www existe en DNS =====
 HAS_WWW=0
@@ -54,14 +79,12 @@ server {
   root $WEB_ROOT;
   index index.php index.html;
 
-  # ACME challenge público
   location ^~ /.well-known/acme-challenge/ {
     root $WEB_ROOT;
     default_type "text/plain";
     allow all;
   }
 
-  # PHP (temporal en HTTP)
   location ~ \.php$ {
     include snippets/fastcgi-php.conf;
     fastcgi_pass unix:/run/php/php$PV-fpm.sock;
@@ -82,7 +105,6 @@ systemctl enable --now nginx
 systemctl reload nginx
 systemctl enable --now "php$PV-fpm"
 
-# UFW opcional
 if command -v ufw >/dev/null 2>&1; then ufw allow 80,443/tcp || true; fi
 
 # ===== Validación previa del challenge =====
@@ -90,16 +112,15 @@ log "Validando acceso HTTP al challenge"
 mkdir -p "$WEB_ROOT/.well-known/acme-challenge"
 echo ok > "$WEB_ROOT/.well-known/acme-challenge/ping"
 HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "http://$DOMAIN/.well-known/acme-challenge/ping" || true)
-[ "$HTTP_CODE" = "200" ] || { echo "HTTP-01 inaccesible (código $HTTP_CODE). Revisa DNS/puerto 80/proxy."; exit 1; }
+[ "$HTTP_CODE" = "200" ] || { echo "HTTP-01 inaccesible (código $HTTP_CODE)."; exit 1; }
 if [ "$HAS_WWW" -eq 1 ]; then
   HTTP_CODE_W=$(curl -s -o /dev/null -w "%{http_code}" "http://www.$DOMAIN/.well-known/acme-challenge/ping" || true)
-  [ "$HTTP_CODE_W" = "200" ] || { echo "HTTP-01 www falló (código $HTTP_CODE_W). Crea A www o se omitirá."; HAS_WWW=0; }
+  [ "$HTTP_CODE_W" = "200" ] || { echo "HTTP-01 www falló (código $HTTP_CODE_W)."; HAS_WWW=0; }
 fi
 
-# ===== Certificado de producción (sin staging, sin HSTS) =====
+# ===== Certificado de producción =====
 log "Emitiendo certificado Let’s Encrypt"
-CERT_DOMS=(-d "$DOMAIN")
-[ "$HAS_WWW" -eq 1 ] && CERT_DOMS+=(-d "www.$DOMAIN")
+CERT_DOMS=(-d "$DOMAIN"); [ "$HAS_WWW" -eq 1 ] && CERT_DOMS+=(-d "www.$DOMAIN")
 certbot certonly --webroot -w "$WEB_ROOT" "${CERT_DOMS[@]}" -m "$LE_EMAIL" --agree-tos --no-eff-email
 
 CERT_DIR="/etc/letsencrypt/live/$DOMAIN"
@@ -107,26 +128,22 @@ FULLCHAIN="$CERT_DIR/fullchain.pem"
 PRIVKEY="$CERT_DIR/privkey.pem"
 [ -s "$FULLCHAIN" ] && [ -s "$PRIVKEY" ] || { echo "Cert no encontrado."; exit 1; }
 
-# ===== Nginx: vhost HTTPS definitivo (sin HSTS) =====
+# ===== Nginx: vhost HTTPS =====
 log "Escribiendo vhost HTTPS definitivo"
 cat > "$HTTP_CONF" <<NGX
-# Redirección 80 -> 443
 server {
   listen 80;
   listen [::]:80;
   server_name $DOMAIN${HAS_WWW:+ www.$DOMAIN};
 
-  # Mantén ACME por si renovación
   location ^~ /.well-known/acme-challenge/ {
     root $WEB_ROOT;
     default_type "text/plain";
     allow all;
   }
-
   return 301 https://\$host\$request_uri;
 }
 
-# HTTPS
 server {
   listen 443 ssl http2;
   listen [::]:443 ssl http2;

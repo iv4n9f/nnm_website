@@ -1,47 +1,52 @@
 <?php
-// api/prices.php - devuelve los precios actuales de Stripe
 declare(strict_types=1);
 
-require_once __DIR__ . '/../init.php';
-
-header('Content-Type: application/json; charset=utf-8');
-
+require_once __DIR__ . '/../vendor/autoload.php';
 $cfg = include __DIR__ . '/../variables.php';
 
-$ids = [
-    'PRICE_VPN'     => $cfg['PRICE_VPN'] ?? '',
-    'PRICE_PASSWORD'=> $cfg['PRICE_PASSWORD'] ?? '',
-    'PRICE_STORAGE' => $cfg['PRICE_STORAGE'] ?? '',
-    'PRICE_BUNDLE'  => $cfg['PRICE_BUNDLE'] ?? '',
-];
+$stripe = new \Stripe\StripeClient($cfg['STRIPE_SECRET']);
 
-$out = [];
+// Cambia por tu product id
+$productId = 'prod_SwFknkGqycuEAL';
 
-foreach ($ids as $key => $id) {
-    if (!$id) {
-        continue;
-    }
-    $isProduct = str_starts_with($id, 'prod_');
-    $url = $isProduct
-        ? "https://api.stripe.com/v1/products/" . urlencode($id) . "?expand[]=default_price"
-        : "https://api.stripe.com/v1/prices/" . urlencode($id);
-    $ch = curl_init($url);
-    curl_setopt_array($ch, [
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_USERPWD        => ($cfg['STRIPE_SECRET'] ?? '') . ':',
-        CURLOPT_TIMEOUT        => 10,
-    ]);
-    $resp = curl_exec($ch);
-    $data = $resp ? json_decode($resp, true) : null;
-    curl_close($ch);
+$res = $stripe->prices->all([
+    'product' => $productId,
+    'active'  => true,
+    'limit'   => 20,
+    'expand'  => ['data.currency_options'],
+]);
 
-    $price = $isProduct ? ($data['default_price'] ?? null) : $data;
-    if (isset($price['unit_amount'], $price['currency'])) {
-        $out[$key] = [
-            'amount'   => ((int)$price['unit_amount']) / 100,
-            'currency' => strtoupper((string)$price['currency']),
-        ];
+// elige el price “mejor”: mensual, más reciente
+$chosen = null;
+foreach ($res->data as $p) {
+    if ($p->type === 'recurring' && $p->recurring?->interval === 'month') {
+        if ($chosen === null || $p->created > $chosen->created) {
+            $chosen = $p;
+        }
     }
 }
 
+// fallback si no hay mensual
+$chosen = $chosen ?: ($res->data[0] ?? null);
+
+$out = [];
+if ($chosen) {
+    // si quieres forzar EUR cuando existan currency_options:
+    $amount = $chosen->unit_amount;
+    $currency = strtoupper($chosen->currency);
+    if (isset($chosen->currency_options['EUR']?->unit_amount)) {
+        $amount = $chosen->currency_options['EUR']->unit_amount;
+        $currency = 'EUR';
+    }
+
+    $out = [
+        'price_id'  => $chosen->id,
+        'amount'    => $amount / 100,
+        'currency'  => $currency,
+        'interval'  => $chosen->recurring->interval ?? null,
+        'interval_count' => $chosen->recurring->interval_count ?? null,
+    ];
+}
+
+header('Content-Type: application/json; charset=utf-8');
 echo json_encode($out, JSON_UNESCAPED_UNICODE);
