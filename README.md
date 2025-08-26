@@ -25,6 +25,9 @@ php -d assert.exception=1 tests/stripe_webhook_test.php
   - `STRIPE_SECRET`, `STRIPE_WEBHOOK_SECRET`
   - `STRIPE_PRICE_VPN`, `STRIPE_PRICE_PASSWORD`, `STRIPE_PRICE_STORAGE`, `STRIPE_PRICE_BUNDLE`
 - `api/stripe_checkout.php` genera sesiones de pago y `api/stripe_portal.php` abre el portal del cliente.
-- Los webhooks (`api/stripe_webhook.php`) actualizan la tabla `subscriptions` y disparan aprovisionamiento vía `provision_service`.
+- Los webhooks (`api/stripe_webhook.php`) actualizan la tabla `subscriptions`
+  y disparan aprovisionamiento vía `provision_service`.
 
-=======
+## Privacidad de datos
+- Endpoint `api/user_privacy.php` permite `action=export` para obtener los datos del usuario y `action=erase` para solicitar el borrado de la cuenta.
+
