@@ -1,10 +1,10 @@
-// nav.js — manejo de menú, tema, idioma y moneda sin Bootstrap
+// nav.js — tema, idioma y moneda con Bootstrap
 (() => {
   const root = document.documentElement;
   const themeKey = 'nnm_theme';
 
   function applyTheme(mode){
-    root.setAttribute('data-theme', mode);
+    root.setAttribute('data-bs-theme', mode);
     const icon = document.getElementById('themeIcon');
     if(icon) icon.className = mode === 'dark' ? 'bi bi-sun' : 'bi bi-moon';
     localStorage.setItem(themeKey, mode);
@@ -13,28 +13,7 @@
   applyTheme(localStorage.getItem(themeKey) || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
 
   document.getElementById('themeToggle')?.addEventListener('click', () => {
-    applyTheme(root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
-  });
-
-  // Menú responsive
-  const navToggle = document.getElementById('navToggle');
-  const mainNav = document.getElementById('mainNav');
-  navToggle?.addEventListener('click', () => {
-    mainNav?.classList.toggle('hidden');
-  });
-
-  // Dropdowns
-  document.querySelectorAll('.dropdown-toggle').forEach(btn => {
-    btn.addEventListener('click', e => {
-      e.preventDefault();
-      const menu = btn.nextElementSibling;
-      menu?.classList.toggle('hidden');
-    });
-  });
-  document.addEventListener('click', e => {
-    if (!e.target.closest('.dropdown')) {
-      document.querySelectorAll('.dropdown-menu:not(.hidden)').forEach(m => m.classList.add('hidden'));
-    }
+    applyTheme(root.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark');
   });
 
   // Idioma
