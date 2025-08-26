@@ -45,6 +45,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <button type="submit" class="btn btn-primary w-100">Entrar</button>
   </form>
   <p class="text-center mt-3"><a href="/register.php">Crear cuenta</a></p>
+  <p class="text-center small mt-3">
+    <a href="/static/privacy.html" target="_blank">Privacidad</a> ·
+    <a href="/static/terms.html" target="_blank">Términos</a> ·
+    <a href="/static/cookies.html" target="_blank">Cookies</a>
+  </p>
 </main>
 </body>
 </html>

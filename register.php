@@ -9,17 +9,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   csrf_verify();
   $email = trim($_POST['email'] ?? '');
   $pass  = $_POST['password'] ?? '';
+  $accept = isset($_POST['accept_terms']);
   if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     $error = 'Email inválido';
   } elseif (strlen($pass) < 8) {
     $error = 'Contraseña muy corta';
+  } elseif (!$accept) {
+    $error = 'Debes aceptar las políticas.';
   } else {
-    $hash = password_hash($pass, PASSWORD_ARGON2ID);
+    $algo = defined('PASSWORD_ARGON2ID') ? PASSWORD_ARGON2ID : PASSWORD_DEFAULT;
+    $hash = password_hash($pass, $algo);
     try {
       $st = db()->prepare('INSERT INTO users(email, password_hash) VALUES(?,?)');
       $st->execute([$email,$hash]);
+      $uid = (int)db()->lastInsertId();
       send_mail('welcome', $email, ['name'=>$email, 'subject'=>'Bienvenido a NNM Secure']);
-      $_SESSION['uid'] = (int)db()->lastInsertId();
+      $_SESSION['uid'] = $uid;
+      audit($uid, 'consent_privacy', ['ip' => $_SERVER['REMOTE_ADDR'] ?? '']);
       header('Location: /panel.php');
       exit;
     } catch (PDOException $e) {
@@ -50,9 +56,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <input type="password" name="password" class="form-control" required>
       <div class="form-text">Mínimo 8 caracteres.</div>
     </div>
+    <div class="form-check mb-3">
+      <input class="form-check-input" type="checkbox" name="accept_terms" id="acceptTerms" required>
+      <label class="form-check-label" for="acceptTerms">
+        Acepto la <a href="/static/privacy.html" target="_blank">Privacidad</a>, <a href="/static/terms.html" target="_blank">Términos</a> y <a href="/static/cookies.html" target="_blank">Cookies</a>.
+      </label>
+    </div>
     <button type="submit" class="btn btn-primary w-100">Registrarse</button>
   </form>
   <p class="text-center mt-3"><a href="/login.php">¿Ya tienes cuenta? Inicia sesión</a></p>
+  <p class="text-center small mt-3">
+    <a href="/static/privacy.html" target="_blank">Privacidad</a> ·
+    <a href="/static/terms.html" target="_blank">Términos</a> ·
+    <a href="/static/cookies.html" target="_blank">Cookies</a>
+  </p>
 </main>
 </body>
 </html>
