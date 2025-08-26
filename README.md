@@ -15,7 +15,6 @@ php -d assert.exception=1 tests/mail_test.php
 php -d assert.exception=1 tests/stripe_webhook_test.php
 ```
 
-
 ## Correo transaccional
 - Plantillas HTML en `templates/{es,en}/<tipo>.html`.
 - Configuración via variables de entorno: `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `MAIL_FROM`.
@@ -28,3 +27,4 @@ php -d assert.exception=1 tests/stripe_webhook_test.php
 - `api/stripe_checkout.php` genera sesiones de pago y `api/stripe_portal.php` abre el portal del cliente.
 - Los webhooks (`api/stripe_webhook.php`) actualizan la tabla `subscriptions` y disparan aprovisionamiento vía `provision_service`.
 
+=======
