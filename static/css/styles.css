@@ -1,0 +1,6 @@
+body {
+    margin: 0;
+    font-family: var(--font-sans);
+    background: var(--md-surface);
+    color: var(--md-on-surface);
+}
