@@ -63,6 +63,19 @@ include __DIR__.'/partials/head.php';
     <a class="link" href="/static/privacy.html" target="_blank">Privacidad</a> ·
     <a class="link" href="/static/terms.html" target="_blank">Términos</a> ·
     <a class="link" href="/static/cookies.html" target="_blank">Cookies</a>
+    <div class="form-check mb-3">
+      <input class="form-check-input" type="checkbox" name="accept_terms" id="acceptTerms" required>
+      <label class="form-check-label" for="acceptTerms">
+        Acepto la <a href="/static/privacy.html" target="_blank">Privacidad</a>, <a href="/static/terms.html" target="_blank">Términos</a> y <a href="/static/cookies.html" target="_blank">Cookies</a>.
+      </label>
+    </div>
+    <button type="submit" class="btn btn-primary w-100">Registrarse</button>
+  </form>
+  <p class="text-center mt-3"><a href="/login.php">¿Ya tienes cuenta? Inicia sesión</a></p>
+  <p class="text-center small mt-3">
+    <a href="/static/privacy.html" target="_blank">Privacidad</a> ·
+    <a href="/static/terms.html" target="_blank">Términos</a> ·
+    <a href="/static/cookies.html" target="_blank">Cookies</a>
   </p>
 </main>
 <?php include __DIR__.'/partials/footer.php'; ?>
