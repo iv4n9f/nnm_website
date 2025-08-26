@@ -1,45 +1,52 @@
 <?php
 declare(strict_types=1);
 require_once __DIR__.'/../init.php';
+require_once __DIR__.'/../provision_hooks.php';
 
 $secret = $CONFIG['STRIPE_WEBHOOK_SECRET'];
 $payload = file_get_contents('php://input');
 $sig = $_SERVER['HTTP_STRIPE_SIGNATURE'] ?? '';
 
-if (!$secret || !$sig) { http_response_code(400); exit('no signature'); }
-
-// Verificación manual básica (si usas la lib oficial, mejor).
-// Aquí asumimos que el reverse proxy ya filtra. En producción usa stripe/stripe-php.
-
-$data = json_decode($payload, true);
-$type = $data['type'] ?? '';
-$obj  = $data['data']['object'] ?? [];
+if (PHP_SAPI !== 'cli' && (!$secret || !$sig)) { http_response_code(400); exit('no signature'); }
 
 function upsert_sub(int $uid, string $product, string $subId, string $status, int $endTs): void {
-  $st = db()->prepare('INSERT INTO subscriptions(user_id,product,stripe_sub_id,status,current_period_end,updated_at)
-    VALUES(?,?,?,?,?,strftime("%s","now"))
-    ON CONFLICT(user_id,product) DO UPDATE SET status=excluded.status, current_period_end=excluded.current_period_end, updated_at=strftime("%s","now")');
-  $st->execute([$uid,$product,$subId,$status,$endTs]);
+    $sql = 'INSERT INTO subscriptions(user_id,product,stripe_sub_id,status,current_period_end,updated_at)
+            VALUES(?,?,?,?,?,strftime("%s","now"))
+            ON CONFLICT(user_id,product) DO UPDATE SET
+              status=excluded.status,
+              current_period_end=excluded.current_period_end,
+              updated_at=strftime("%s","now")';
+    $st = db()->prepare($sql);
+    $st->execute([$uid,$product,$subId,$status,$endTs]);
 }
 
-switch ($type) {
-  case 'customer.subscription.created':
-  case 'customer.subscription.updated':
-  case 'customer.subscription.deleted':
-    $subId  = (string)($obj['id'] ?? '');
-    $status = (string)($obj['status'] ?? 'incomplete');
-    $ends   = (int)($obj['current_period_end'] ?? 0);
-    $custId = (string)($obj['customer'] ?? '');
-    // mapear a usuario
-    $st = db()->prepare('SELECT u.id FROM users u JOIN customers c ON c.user_id = u.id WHERE c.stripe_customer_id = ?');
-    $st->execute([$custId]);
-    $uid = (int)($st->fetchColumn() ?: 0);
-    if ($uid) {
-      // Determinar producto por price/product metadata si la pones. Aquí placeholder:
-      $product = 'bundle';
-      upsert_sub($uid, $product, $subId, $status, $ends);
+function handle_stripe_event(array $data): void {
+    $type = $data['type'] ?? '';
+    $obj  = $data['data']['object'] ?? [];
+    switch ($type) {
+        case 'customer.subscription.created':
+        case 'customer.subscription.updated':
+        case 'customer.subscription.deleted':
+            $subId  = (string)($obj['id'] ?? '');
+            $status = (string)($obj['status'] ?? 'incomplete');
+            $ends   = (int)($obj['current_period_end'] ?? 0);
+            $custId = (string)($obj['customer'] ?? '');
+            $product = $obj['metadata']['product'] ?? 'bundle';
+            $st = db()->prepare('SELECT id FROM users WHERE billing_customer_id=?');
+            $st->execute([$custId]);
+            $uid = (int)($st->fetchColumn() ?: 0);
+            if ($uid) {
+                upsert_sub($uid, $product, $subId, $status, $ends);
+                $active = in_array($status, ['active','trialing'], true);
+                provision_service($uid, $product, $active);
+            }
+            break;
     }
-    break;
 }
-http_response_code(200);
-echo '{"ok":true}';
+
+if (PHP_SAPI !== 'cli') {
+    $data = json_decode($payload, true);
+    handle_stripe_event($data);
+    http_response_code(200);
+    echo '{"ok":true}';
+}

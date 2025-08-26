@@ -8,6 +8,10 @@ return [
   // Stripe
   'STRIPE_SECRET' => getenv('STRIPE_SECRET') ?: '',
   'STRIPE_WEBHOOK_SECRET' => getenv('STRIPE_WEBHOOK_SECRET') ?: '',
+  'PRICE_VPN' => getenv('STRIPE_PRICE_VPN') ?: '',
+  'PRICE_PASSWORD' => getenv('STRIPE_PRICE_PASSWORD') ?: '',
+  'PRICE_STORAGE' => getenv('STRIPE_PRICE_STORAGE') ?: '',
+  'PRICE_BUNDLE' => getenv('STRIPE_PRICE_BUNDLE') ?: '',
 
   // Rutas módulos
   'WG_MODULE' => '/modules/wg-manager.sh',

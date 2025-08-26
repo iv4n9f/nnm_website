@@ -67,4 +67,26 @@
       btn.textContent = s.active ? 'Gestionar' : 'Suscribirse';
     });
   });
+
+  qa('.js-manage-sub').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const tr = btn.closest('tr');
+      const product = tr?.dataset.product;
+      try {
+        if (btn.textContent.includes('Gestionar')) {
+          const {url} = await call('/api/stripe_portal.php', {method:'POST'});
+          window.location = url;
+        } else {
+          const {url} = await call('/api/stripe_checkout.php', {
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({product})
+          });
+          window.location = url;
+        }
+      } catch(e){
+        alert('Error: '+e.message);
+      }
+    });
+  });
 })();
