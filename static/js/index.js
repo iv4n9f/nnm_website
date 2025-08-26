@@ -8,11 +8,11 @@
       const dot = document.getElementById('srv-'+id);
       if (!dot) return;
       fetch(url, {method:'HEAD', mode:'no-cors'}).then(() => {
-        dot.classList.remove('bg-gray-400');
-        dot.classList.add('bg-green-500');
+        dot.classList.remove('bg-secondary');
+        dot.classList.add('bg-success');
       }).catch(() => {
-        dot.classList.remove('bg-gray-400');
-        dot.classList.add('bg-red-500');
+        dot.classList.remove('bg-secondary');
+        dot.classList.add('bg-danger');
       });
     });
   })();
