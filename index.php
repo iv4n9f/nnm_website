@@ -15,10 +15,10 @@ include __DIR__.'/partials/head.php';
       <div class="col-md-6 text-md-start">
         <h1 class="display-5 fw-bold" data-i18n="hero.title">Privacidad simple. Rendimiento constante.</h1>
         <p class="lead" data-i18n="hero.subtitle">VPN WireGuard, Bitwarden autoalojado y nube cifrada con servidores en Reino Unido y Alemania.</p>
-        <div class="d-flex gap-2 justify-content-center justify-content-md-start">
+        <div class="d-flex gap-2 justify-content-center justify-content-md-start align-items-center">
           <button class="btn btn-primary" onclick="document.querySelector('#services').scrollIntoView({behavior:'smooth'})" data-i18n="hero.cta_primary">Ver servicios</button>
           <button class="btn btn-outline-light" onclick="document.querySelector('#pricing').scrollIntoView({behavior:'smooth'})" data-i18n="hero.cta_secondary">Ver precios</button>
-          <span class="px-2 py-1 text-sm rounded bg-gray-100 text-gray-900 self-center">Desde <span class="price price-badge" data-price="PRICE_VPN"></span><span class="unit"></span> / mes</span>
+          <span class="badge bg-light text-dark">Desde <span class="price price-badge" data-price="PRICE_VPN"></span><span class="unit"></span> / mes</span>
         </div>
         <div class="d-flex gap-2 mt-3">
           <i class="bi bi-shield-lock"></i><strong>&nbsp;Cifrado serio</strong>
@@ -32,7 +32,7 @@ include __DIR__.'/partials/head.php';
         </div>
       </div>
       <div class="col-md-6 mt-4 mt-md-0">
-        <div class="card text-body shadow">
+        <div class="card shadow">
           <div class="card-body">
             <div class="d-flex justify-content-between">
               <strong>Estado</strong><span class="text-muted">Infra UE</span>
@@ -42,21 +42,21 @@ include __DIR__.'/partials/head.php';
               <div class="col">
                 <strong>UK</strong>
                 <div class="d-flex flex-column align-items-center">
-                  <span class="status-dot bg-gray-400" id="srv-uk"></span>
+                  <span class="status-dot bg-secondary" id="srv-uk"></span>
                   <div class="text-muted small">nnmsrvuk01</div>
                 </div>
               </div>
               <div class="col">
                 <strong>DE</strong>
                 <div class="d-flex flex-column align-items-center">
-                  <span class="status-dot bg-gray-400" id="srv-de"></span>
+                  <span class="status-dot bg-secondary" id="srv-de"></span>
                   <div class="text-muted small">nnmsrvde01</div>
                 </div>
               </div>
               <div class="col">
                 <strong>E2E</strong>
                 <div class="d-flex flex-column align-items-center">
-                  <span class="status-dot bg-gray-400" id="srv-e2e"></span>
+                  <span class="status-dot bg-secondary" id="srv-e2e"></span>
                   <div class="text-muted small">Bitwarden</div>
                 </div>
               </div>
@@ -69,16 +69,16 @@ include __DIR__.'/partials/head.php';
 </section>
 
 <main>
-  <section id="services" class="py-5">
+  <section id="services" class="py-5 reveal">
     <div class="container">
       <h2 class="h3 mb-4" data-i18n="sections.services.title">Servicios</h2>
       <div class="row g-4">
         <div class="col-md-4">
-          <div class="card h-100 shadow-sm"><div class="card-body d-flex flex-column gap-2">
+          <div class="card h-100 shadow-sm lift reveal"><div class="card-body d-flex flex-column gap-2">
             <img class="service-logo logo-dark" src="static/rsc/nnm-vpn-logo.png" alt="VPN">
             <div class="d-flex justify-content-between">
               <strong data-i18n="sections.services.card_vpn.title">VPN</strong>
-              <span class="px-2 py-1 text-xs rounded bg-gray-600 text-white"><span class="price" data-price="PRICE_VPN"></span><span class="unit"></span> /m</span>
+              <span class="badge bg-secondary"><span class="price" data-price="PRICE_VPN"></span><span class="unit"></span> /m</span>
             </div>
             <ul class="text-muted">
               <li data-i18n="sections.services.card_vpn.p1">WireGuard por defecto.</li>
@@ -89,11 +89,11 @@ include __DIR__.'/partials/head.php';
           </div></div>
         </div>
         <div class="col-md-4">
-          <div class="card h-100 shadow-sm"><div class="card-body d-flex flex-column gap-2">
+          <div class="card h-100 shadow-sm lift reveal"><div class="card-body d-flex flex-column gap-2">
             <img class="service-logo logo-dark" src="static/rsc/nnm-psw-logo.png" alt="Gestor">
             <div class="d-flex justify-content-between">
               <strong data-i18n="sections.services.card_password_manager.title">Gestor de contraseñas</strong>
-              <span class="px-2 py-1 text-xs rounded bg-gray-600 text-white"><span class="price" data-price="PRICE_PASSWORD"></span><span class="unit"></span> /m</span>
+              <span class="badge bg-secondary"><span class="price" data-price="PRICE_PASSWORD"></span><span class="unit"></span> /m</span>
             </div>
             <ul class="text-muted">
               <li data-i18n="sections.services.card_password_manager.p1">Cifrado E2E.</li>
@@ -104,11 +104,11 @@ include __DIR__.'/partials/head.php';
           </div></div>
         </div>
         <div class="col-md-4">
-          <div class="card h-100 shadow-sm"><div class="card-body d-flex flex-column gap-2">
+          <div class="card h-100 shadow-sm lift reveal"><div class="card-body d-flex flex-column gap-2">
             <img class="service-logo logo-dark" src="static/rsc/nnm-stg-logo.png" alt="Storage">
             <div class="d-flex justify-content-between">
               <strong data-i18n="sections.services.card_encrypted_storage.title">Almacenamiento cifrado</strong>
-              <span class="px-2 py-1 text-xs rounded bg-gray-600 text-white"><span class="price" data-price="PRICE_STORAGE"></span><span class="unit"></span> /m</span>
+              <span class="badge bg-secondary"><span class="price" data-price="PRICE_STORAGE"></span><span class="unit"></span> /m</span>
             </div>
             <ul class="text-muted">
               <li data-i18n="sections.services.card_encrypted_storage.p1">Versionado y enlaces protegidos.</li>
@@ -122,19 +122,22 @@ include __DIR__.'/partials/head.php';
     </div>
   </section>
 
-  <section id="features" class="py-5 bg-body-secondary">
+  <section id="features" class="py-5 bg-body-secondary reveal">
     <div class="container">
       <h2 class="h3 mb-4" data-i18n="sections.features.title">Características</h2>
       <div class="row g-4">
-        <div class="col-md-4"><div class="card h-100 shadow-sm"><div class="card-body">
+        <div class="col-md-4"><div class="card h-100 shadow-sm lift reveal"><div class="card-body text-center">
+          <i class="bi bi-shield-lock fs-1 text-primary mb-3"></i>
           <strong data-i18n="sections.features.f1.title">Cifrado serio</strong>
           <p class="text-muted" data-i18n="sections.features.f1.body">TLS moderno, WireGuard y buenas prácticas por defecto.</p>
         </div></div></div>
-        <div class="col-md-4"><div class="card h-100 shadow-sm"><div class="card-body">
+        <div class="col-md-4"><div class="card h-100 shadow-sm lift reveal"><div class="card-body text-center">
+          <i class="bi bi-speedometer2 fs-1 text-primary mb-3"></i>
           <strong data-i18n="sections.features.f2.title">Baja latencia</strong>
           <p class="text-muted" data-i18n="sections.features.f2.body">Nodos en Reino Unido y Alemania con rutas optimizadas.</p>
         </div></div></div>
-        <div class="col-md-4"><div class="card h-100 shadow-sm"><div class="card-body">
+        <div class="col-md-4"><div class="card h-100 shadow-sm lift reveal"><div class="card-body text-center">
+          <i class="bi bi-wind fs-1 text-primary mb-3"></i>
           <strong data-i18n="sections.features.f3.title">Sin humo</strong>
           <p class="text-muted" data-i18n="sections.features.f3.body">Sin registros innecesarios ni permanencias.</p>
         </div></div></div>
@@ -142,7 +145,7 @@ include __DIR__.'/partials/head.php';
     </div>
   </section>
 
-  <section id="pricing" class="py-5 bg-body-secondary">
+  <section id="pricing" class="py-5 bg-body-secondary reveal">
     <div class="container">
       <h2 class="h3 mb-4" data-i18n="sections.pricing.title">Precios</h2>
       <div class="row g-4">
@@ -155,7 +158,7 @@ include __DIR__.'/partials/head.php';
         ];
         foreach ($plans as [$name,$key,$bullets]): ?>
         <div class="col-md-3">
-          <div class="card h-100 shadow-sm"><div class="card-body d-flex flex-column gap-2">
+          <div class="card h-100 shadow-sm lift reveal"><div class="card-body d-flex flex-column gap-2">
             <strong><?= e($name) ?></strong>
             <div class="fs-3 fw-semibold"><span class="price" data-price="<?= e($key) ?>"></span><span class="unit"></span> /m</div>
             <ul class="text-muted">
@@ -170,7 +173,7 @@ include __DIR__.'/partials/head.php';
     </div>
   </section>
 
-  <section id="faq" class="py-5">
+  <section id="faq" class="py-5 reveal">
     <div class="container">
       <h2 class="h4 mb-4" data-i18n="sections.faq.title">Preguntas frecuentes</h2>
       <div class="faq">
@@ -186,7 +189,7 @@ include __DIR__.'/partials/head.php';
     </div>
   </section>
 
-  <section id="contact" class="py-5">
+  <section id="contact" class="py-5 reveal">
     <div class="container">
       <h2 class="h4 mb-3" data-i18n="sections.contact.title">Contacto</h2>
       <p>Escríbenos a <a href="mailto:<?php echo e($config['MAIL'] ?? 'info@northnexusmex.cloud'); ?>"><?php echo e($config['MAIL'] ?? 'info@northnexusmex.cloud'); ?></a>.</p>
