@@ -24,6 +24,14 @@ switch ($action) {
     audit($u['id'], 'erase_account');
     session_destroy();
     echo json_encode(['ok' => true]);
+=======
+    // TODO: gather and return all user-related data
+    echo json_encode(['user' => $u]);
+    break;
+  case 'erase':
+    // TODO: schedule data deletion and revoke active sessions
+    http_response_code(202);
+    echo json_encode(['ok' => true, 'scheduled' => true]);
     break;
   default:
     http_response_code(400);
