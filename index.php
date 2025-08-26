@@ -15,10 +15,10 @@ include __DIR__.'/partials/head.php';
       <div class="col-md-6 text-md-start">
         <h1 class="display-5 fw-bold" data-i18n="hero.title">Privacidad simple. Rendimiento constante.</h1>
         <p class="lead" data-i18n="hero.subtitle">VPN WireGuard, Bitwarden autoalojado y nube cifrada con servidores en Reino Unido y Alemania.</p>
-        <div class="d-flex gap-2 justify-content-center justify-content-md-start">
+        <div class="d-flex gap-2 justify-content-center justify-content-md-start align-items-center">
           <button class="btn btn-primary" onclick="document.querySelector('#services').scrollIntoView({behavior:'smooth'})" data-i18n="hero.cta_primary">Ver servicios</button>
           <button class="btn btn-outline-light" onclick="document.querySelector('#pricing').scrollIntoView({behavior:'smooth'})" data-i18n="hero.cta_secondary">Ver precios</button>
-          <span class="px-2 py-1 text-sm rounded bg-gray-100 text-gray-900 self-center">Desde <span class="price price-badge" data-price="PRICE_VPN"></span><span class="unit"></span> / mes</span>
+          <span class="badge bg-light text-dark">Desde <span class="price price-badge" data-price="PRICE_VPN"></span><span class="unit"></span> / mes</span>
         </div>
         <div class="d-flex gap-2 mt-3">
           <i class="bi bi-shield-lock"></i><strong>&nbsp;Cifrado serio</strong>
@@ -32,7 +32,7 @@ include __DIR__.'/partials/head.php';
         </div>
       </div>
       <div class="col-md-6 mt-4 mt-md-0">
-        <div class="card text-body shadow">
+        <div class="card shadow">
           <div class="card-body">
             <div class="d-flex justify-content-between">
               <strong>Estado</strong><span class="text-muted">Infra UE</span>
@@ -78,7 +78,7 @@ include __DIR__.'/partials/head.php';
             <img class="service-logo logo-dark" src="static/rsc/nnm-vpn-logo.png" alt="VPN">
             <div class="d-flex justify-content-between">
               <strong data-i18n="sections.services.card_vpn.title">VPN</strong>
-              <span class="px-2 py-1 text-xs rounded bg-gray-600 text-white"><span class="price" data-price="PRICE_VPN"></span><span class="unit"></span> /m</span>
+              <span class="badge bg-secondary"><span class="price" data-price="PRICE_VPN"></span><span class="unit"></span> /m</span>
             </div>
             <ul class="text-muted">
               <li data-i18n="sections.services.card_vpn.p1">WireGuard por defecto.</li>
@@ -93,7 +93,7 @@ include __DIR__.'/partials/head.php';
             <img class="service-logo logo-dark" src="static/rsc/nnm-psw-logo.png" alt="Gestor">
             <div class="d-flex justify-content-between">
               <strong data-i18n="sections.services.card_password_manager.title">Gestor de contraseñas</strong>
-              <span class="px-2 py-1 text-xs rounded bg-gray-600 text-white"><span class="price" data-price="PRICE_PASSWORD"></span><span class="unit"></span> /m</span>
+              <span class="badge bg-secondary"><span class="price" data-price="PRICE_PASSWORD"></span><span class="unit"></span> /m</span>
             </div>
             <ul class="text-muted">
               <li data-i18n="sections.services.card_password_manager.p1">Cifrado E2E.</li>
@@ -108,7 +108,7 @@ include __DIR__.'/partials/head.php';
             <img class="service-logo logo-dark" src="static/rsc/nnm-stg-logo.png" alt="Storage">
             <div class="d-flex justify-content-between">
               <strong data-i18n="sections.services.card_encrypted_storage.title">Almacenamiento cifrado</strong>
-              <span class="px-2 py-1 text-xs rounded bg-gray-600 text-white"><span class="price" data-price="PRICE_STORAGE"></span><span class="unit"></span> /m</span>
+              <span class="badge bg-secondary"><span class="price" data-price="PRICE_STORAGE"></span><span class="unit"></span> /m</span>
             </div>
             <ul class="text-muted">
               <li data-i18n="sections.services.card_encrypted_storage.p1">Versionado y enlaces protegidos.</li>

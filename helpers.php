@@ -33,13 +33,14 @@ function require_role(array $u, string ...$roles): void {
   }
 }
 
-function audit(int $uid, string $action, array $payload = []): void {
+function audit(int $uid, string $action, array $payload = []): int {
   global $CONFIG;
   $meta = json_encode($payload, JSON_UNESCAPED_UNICODE);
   $ts = time();
   $sig = hash_hmac('sha256', $uid . '|' . $action . '|' . $meta . '|' . $ts, $CONFIG['AUDIT_SECRET']);
   $st = db()->prepare('INSERT INTO audit_logs(user_id,action,meta,signature,created_at) VALUES(?,?,?,?,datetime("now"))');
   $st->execute([$uid, $action, $meta, $sig]);
+  return (int)db()->lastInsertId();
 }
 
 function rate_limit(string $key, int $limit, int $period): bool {

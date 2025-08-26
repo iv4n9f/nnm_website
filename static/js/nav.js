@@ -20,7 +20,7 @@
   const navToggle = document.getElementById('navToggle');
   const mainNav = document.getElementById('mainNav');
   navToggle?.addEventListener('click', () => {
-    mainNav?.classList.toggle('hidden');
+    mainNav?.classList.toggle('open');
   });
 
   // Dropdowns
@@ -28,12 +28,12 @@
     btn.addEventListener('click', e => {
       e.preventDefault();
       const menu = btn.nextElementSibling;
-      menu?.classList.toggle('hidden');
+      menu?.classList.toggle('show');
     });
   });
   document.addEventListener('click', e => {
     if (!e.target.closest('.dropdown')) {
-      document.querySelectorAll('.dropdown-menu:not(.hidden)').forEach(m => m.classList.add('hidden'));
+      document.querySelectorAll('.dropdown-menu.show').forEach(m => m.classList.remove('show'));
     }
   });
 

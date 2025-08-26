@@ -21,7 +21,6 @@ $canonical = $canonical ?? ('https://' . $host . ($_SERVER['REQUEST_URI'] ?? '/'
   <meta name="color-scheme" content="light dark">
   <link rel="icon" href="/static/rsc/nnm-logo.ico">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-  <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="/static/css/styles.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 </head>
