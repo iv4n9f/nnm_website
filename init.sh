@@ -8,7 +8,7 @@ WEB_ROOT="/srv/www/$DOMAIN"
 SERVER_NAME="nnm"
 WWW_USER="www-data"
 WWW_GROUP="www-data"
-PV="$(php -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;' 2>/dev/null || echo 8.3)"
+PV="$(php -r 'echo PHP_MAJOR_VERSION.\".\".PHP_MINOR_VERSION;' 2>/dev/null || echo 8.3)"
 LE_EMAIL="${LE_EMAIL:-${LE_MAIL:-admin@$DOMAIN}}"
 
 log(){ printf "[init] %s\n" "$*"; }
@@ -21,18 +21,7 @@ log "Paquetes base"
 export DEBIAN_FRONTEND=noninteractive
 apt-get update -y
 apt-get install -y nginx "php$PV-fpm" "php$PV-cli" "php$PV-sqlite3" \
-  "php$PV-curl" "php$PV-mbstring" "php$PV-xml" "php$PV-zip" certbot acl curl git unzip
-# Composer desde apt si existe
-if ! command -v composer >/dev/null 2>&1; then
-  log "Instalando Composer"
-  apt-get install -y composer || true
-fi
-# Si aún no está, usa installer oficial
-if ! command -v composer >/devnull 2>&1; then
-  php -r "copy('https://getcomposer.org/installer','composer-setup.php');"
-  php composer-setup.php --install-dir=/usr/local/bin --filename=composer
-  rm -f composer-setup.php
-fi
+  "php$PV-curl" "php$PV-mbstring" "php$PV-xml" "php$PV-zip" certbot acl curl git unzip ca-certificates
 
 php -m | grep -qi pdo_sqlite || { echo "Falta php$PV-sqlite3"; exit 1; }
 
@@ -45,17 +34,36 @@ find "$WEB_ROOT" -type d -exec chmod 755 {} \;
 find "$WEB_ROOT" -type f -exec chmod 644 {} \;
 chmod 755 /srv /srv/www 2>/dev/null || true
 
+# ===== Composer =====
+if ! command -v composer >/dev/null 2>&1; then
+  log "Instalando Composer"
+  apt-get install -y composer || true
+fi
+if ! command -v composer >/dev/null 2>&1; then
+  log "Instalador oficial de Composer"
+  php -r "copy('https://getcomposer.org/installer','composer-setup.php');"
+  php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+  rm -f composer-setup.php
+fi
+command -v composer >/dev/null 2>&1 || { echo "Composer no disponible"; exit 1; }
+
 # ===== Dependencias PHP del proyecto (Stripe SDK) =====
 log "Instalando dependencias PHP en $WEB_ROOT"
-# Si hay composer.json, instala; si no, crea mínimo y requiere stripe
-if [ -f "$WEB_ROOT/composer.json" ]; then
-  sudo -u "$WWW_USER" composer install --no-dev --prefer-dist -d "$WEB_ROOT" || \
-  composer install --no-dev --prefer-dist -d "$WEB_ROOT"
-else
-  sudo -u "$WWW_USER" composer init -n --name nnm/site --working-dir "$WEB_ROOT" || true
-  sudo -u "$WWW_USER" composer require stripe/stripe-php:^14 --no-dev --prefer-dist -d "$WEB_ROOT" || \
-  composer require stripe/stripe-php:^14 --no-dev --prefer-dist -d "$WEB_ROOT"
+cd "$WEB_ROOT"
+
+# Inicializa composer.json si no existe
+if [ ! -f composer.json ]; then
+  sudo -u "$WWW_USER" composer init -n --name nnm/site
 fi
+
+# Añade stripe/stripe-php
+if ! grep -q '"stripe/stripe-php"' composer.json 2>/dev/null; then
+  sudo -u "$WWW_USER" composer require stripe/stripe-php:^14 --prefer-dist
+fi
+
+# Optimiza autoload en entorno prod
+sudo -u "$WWW_USER" composer install --no-dev --optimize-autoloader
+
 # Asegura permisos de vendor
 chown -R "$WWW_USER:$WWW_GROUP" "$WEB_ROOT/vendor" || true
 find "$WEB_ROOT/vendor" -type d -exec chmod 755 {} \; 2>/dev/null || true
@@ -79,12 +87,14 @@ server {
   root $WEB_ROOT;
   index index.php index.html;
 
+  # ACME challenge público
   location ^~ /.well-known/acme-challenge/ {
     root $WEB_ROOT;
     default_type "text/plain";
     allow all;
   }
 
+  # PHP (temporal en HTTP)
   location ~ \.php$ {
     include snippets/fastcgi-php.conf;
     fastcgi_pass unix:/run/php/php$PV-fpm.sock;
@@ -105,6 +115,7 @@ systemctl enable --now nginx
 systemctl reload nginx
 systemctl enable --now "php$PV-fpm"
 
+# UFW opcional
 if command -v ufw >/dev/null 2>&1; then ufw allow 80,443/tcp || true; fi
 
 # ===== Validación previa del challenge =====
@@ -112,10 +123,10 @@ log "Validando acceso HTTP al challenge"
 mkdir -p "$WEB_ROOT/.well-known/acme-challenge"
 echo ok > "$WEB_ROOT/.well-known/acme-challenge/ping"
 HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" "http://$DOMAIN/.well-known/acme-challenge/ping" || true)
-[ "$HTTP_CODE" = "200" ] || { echo "HTTP-01 inaccesible (código $HTTP_CODE)."; exit 1; }
+[ "$HTTP_CODE" = "200" ] || { echo "HTTP-01 inaccesible (código $HTTP_CODE). Revisa DNS/puerto 80/proxy."; exit 1; }
 if [ "$HAS_WWW" -eq 1 ]; then
   HTTP_CODE_W=$(curl -s -o /dev/null -w "%{http_code}" "http://www.$DOMAIN/.well-known/acme-challenge/ping" || true)
-  [ "$HTTP_CODE_W" = "200" ] || { echo "HTTP-01 www falló (código $HTTP_CODE_W)."; HAS_WWW=0; }
+  [ "$HTTP_CODE_W" = "200" ] || { echo "HTTP-01 www falló (código $HTTP_CODE_W). Crea A www o se omitirá."; HAS_WWW=0; }
 fi
 
 # ===== Certificado de producción =====
@@ -131,6 +142,7 @@ PRIVKEY="$CERT_DIR/privkey.pem"
 # ===== Nginx: vhost HTTPS =====
 log "Escribiendo vhost HTTPS definitivo"
 cat > "$HTTP_CONF" <<NGX
+# Redirección 80 -> 443
 server {
   listen 80;
   listen [::]:80;
@@ -144,6 +156,7 @@ server {
   return 301 https://\$host\$request_uri;
 }
 
+# HTTPS
 server {
   listen 443 ssl http2;
   listen [::]:443 ssl http2;
