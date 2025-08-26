@@ -1,6 +1,16 @@
 body {
-    margin: 0;
-    font-family: var(--font-sans);
-    background: var(--md-surface);
-    color: var(--md-on-surface);
+  font-family: Inter, system-ui, sans-serif;
+}
+.status-dot {
+  width: .6rem;
+  height: .6rem;
+  border-radius: 50%;
+}
+.service-logo {
+  width: auto;
+  height: 64px;
+  object-fit: contain;
+}
+.trustbar img {
+  height: 24px;
 }

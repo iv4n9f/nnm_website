@@ -25,12 +25,14 @@ function send_mail(string $type, string $to, array $vars = [], string $lang = 'e
             $body = str_replace('{{'.$k.'}}', htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'), $body);
         }
     }
+    $subject = $vars['subject'] ?? 'NNM';
+    $logo = getenv('MAIL_LOGO_URL') ?: 'https://nnm.example/static/rsc/nnm-logo.png';
+    $body = "<!doctype html><html lang=\"{$lang}\"><head><meta charset=\"utf-8\"><meta name=\"color-scheme\" content=\"light dark\"><title>".htmlspecialchars($subject, ENT_QUOTES, 'UTF-8')."</title><style>body{font-family:Arial,sans-serif;background:#fff;color:#000;}@media (prefers-color-scheme:dark){body{background:#111;color:#eee;}}</style></head><body><div style=\"text-align:center;margin-bottom:16px\"><img src=\"{$logo}\" alt=\"NNM Secure\" style=\"height:48px\"></div>{$body}</body></html>";
     $mailFrom = getenv('MAIL_FROM') ?: 'NNM Secure <info@northnexusmex.cloud>';
     $smtpHost = getenv('SMTP_HOST') ?: '';
     $smtpPort = getenv('SMTP_PORT') ?: '';
     $smtpUser = getenv('SMTP_USER') ?: '';
     $smtpPass = getenv('SMTP_PASS') ?: '';
-    $subject = $vars['subject'] ?? 'NNM';
 
     // Stub send: replace with real SMTP implementation.
     $sent = true;
