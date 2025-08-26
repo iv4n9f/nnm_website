@@ -101,7 +101,6 @@ include __DIR__.'/partials/head.php';
       </div>
     </div>
   </section>
-
   <!-- Características -->
   <section id="features" class="section" style="background:var(--md-surface-variant)">
     <div class="container">
@@ -118,7 +117,28 @@ include __DIR__.'/partials/head.php';
         <div class="card"><div class="content">
           <strong data-i18n="sections.features.f3.title">Sin humo</strong>
           <p class="subtle" data-i18n="sections.features.f3.body">Sin registros innecesarios ni permanencias.</p>
+  <!-- Precios -->
+  <section id="pricing" class="section" style="background:var(--md-surface-variant)">
+    <div class="container">
+      <h2 class="headline" style="font-size:var(--headline-md)" data-i18n="sections.pricing.title">Precios</h2>
+      <div class="grid grid-4" style="margin-top:12px">
+        <?php
+        $plans = [
+          ['VPN','PRICE_VPN',['WireGuard','Sin registros','Apps multiplataforma']],
+          ['Gestor','PRICE_PASSWORD',['Bitwarden self-hosted','Compartición segura','2FA y llaves']],
+          ['Nube','PRICE_STORAGE',['Cifrado y versionado','Clientes desktop y móvil','Enlaces protegidos']],
+          ['Paquete','PRICE_PACKAGE',['VPN + Gestor + Nube','Ahorro frente a planes sueltos','Soporte prioritario']],
+        ];
+        foreach ($plans as [$name,$key,$bullets]): ?>
+        <div class="card"><div class="content" style="display:flex;flex-direction:column;gap:10px">
+          <strong><?= e($name) ?></strong>
+          <div style="font-size:28px;font-weight:600"><span class="price" data-price="<?= e($key) ?>"></span><span class="unit"></span> /m</div>
+          <ul class="subtle">
+            <?php foreach ($bullets as $b): ?><li><?= e($b) ?></li><?php endforeach; ?>
+          </ul>
+          <md-filled-button onclick="location.href='<?php echo $isLogged ? '/panel.php' : '/register.php'; ?>'">Empezar</md-filled-button>
         </div></div>
+        <?php endforeach; ?>
       </div>
     </div>
   </section>

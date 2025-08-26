@@ -3,6 +3,8 @@
   <md-icon-button id="navToggle" class="mobile-only" aria-label="Menú"><span class="material-symbols-rounded">menu</span></md-icon-button>
   <a class="brand" href="/"><img class="brand-logo" src="/static/rsc/nnm-logo.png" alt="NNM"><span data-i18n="brand">NNM Secure</span></a>
   <nav id="mainNav" class="nav-links">
+  <a class="brand" href="/"><img class="brand-logo" src="/static/rsc/nnm-logo.png" alt="NNM"><span data-i18n="brand">NNM Secure</span></a>
+  <nav class="nav-links">
     <a href="/#services" data-i18n="nav.services">Servicios</a>
     <a href="/#features" data-i18n="nav.features">Características</a>
     <a href="/#pricing" data-i18n="nav.pricing">Precios</a>

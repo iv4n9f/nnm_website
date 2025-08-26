@@ -48,7 +48,6 @@
     document.getElementById('lblCurrency').textContent = savedCur;
     window.dispatchEvent(new CustomEvent('nnm:set-currency',{detail:{currency:savedCur}}));
   }
-
   const navToggle = document.getElementById('navToggle');
   const mainNav = document.getElementById('mainNav');
   navToggle?.addEventListener('click', () => mainNav.classList.toggle('open'));
